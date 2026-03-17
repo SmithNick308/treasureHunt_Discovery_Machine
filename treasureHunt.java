@@ -119,24 +119,19 @@ public class treasureHunt {
         char player = board[currentX][currentY];
         boolean done = false;
 
-        if (move == 'L') {
-         player = turnLeft player);
-            board[currentX][currentY] = player;
-        } else if (move == 'R') {
-         player = turnRight player);
-            board[currentX][currentY] = player;
-        } else if (move == 'S') {
+        if (move == 'S') {
             shine(board, currentX, currentY, player);
-        } else if (move == 'G') {
+        } 
+        else if (move == 'G') {
             int spaces = getSpaces();
             int[] result = go(board, currentX, currentY, player, spaces);
             currentX = result[0];
             currentY = result[1];
             done = (result[2] == 1);
-        } else if (move == 'Q') {
+        } 
+        else if (move == 'Q') {
             done = true;
         }
-
         return new int[]{currentX, currentY, done ? 1 : 0};
     }
 
@@ -150,44 +145,6 @@ public class treasureHunt {
         else System.out.println("Error: Invalid player .");
     }
 
-    static int[] go(char[][] board, int x, int y, char player, int spaces) {
-        if  player == '^') return goUp(board, x, y, spaces);
-        if  player == '<') return goLeft(board, x, y, spaces);
-        if  player == 'v') return goDown(board, x, y, spaces);
-        else if  player == '>') return goRight(board, x, y, spaces);     
-    }
-
-    // -----------------------------
-    // Movement and shine functions
-    // (Shortened here for space)
-    // -----------------------------
-
-    static int[] goUp(char[][] board, int x, int y, int spaces) {
-        if (spaces > x) {
-            System.out.println("Move rejected -- you would be off the edge.");
-            return new int[]{x, y, 0};
-        }
-
-        for (int row = x - 1; row >= x - spaces; row--) {
-            char ch = board[row][y];
-            if (ch == 'o' || ch == 'O') {
-                System.out.println("You lost. You hit an obstacle.");
-                return new int[]{row, y, 1};
-            }
-            if (ch == 't' || ch == 'T') {
-                System.out.println("You won! You reached the treasure!");
-                return new int[]{row, y, 1};
-            }
-            board[row][y] = ' ';
-        }
-
-        board[x][y] = ' ';
-        x -= spaces;
-        board[x][y] = '^';
-        return new int[]{x, y, 0};
-    }
-
-    // (Left, Right, Down, Shine functions follow same pattern)
 
     // -----------------------------
     // Initialization
