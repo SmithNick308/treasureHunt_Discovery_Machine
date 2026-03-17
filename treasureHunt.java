@@ -12,7 +12,8 @@ public class treasureHunt {
             System.out.print("\nPlay another game (y/n)? ");
             reply = in.next().charAt(0);
             System.out.println();
-        } while (reply == 'y' || reply == 'Y');
+        } 
+        while (reply == 'y' || reply == 'Y');
     }
 
     static void oneGame() {
@@ -115,20 +116,20 @@ public class treasureHunt {
 
     static int[] oneMove(char[][] board, int currentX, int currentY) {
         char move = getMove();
-        char symbol = board[currentX][currentY];
+        char player = board[currentX][currentY];
         boolean done = false;
 
         if (move == 'L') {
-            symbol = turnLeft(symbol);
-            board[currentX][currentY] = symbol;
+         player = turnLeft player);
+            board[currentX][currentY] = player;
         } else if (move == 'R') {
-            symbol = turnRight(symbol);
-            board[currentX][currentY] = symbol;
+         player = turnRight player);
+            board[currentX][currentY] = player;
         } else if (move == 'S') {
-            shine(board, currentX, currentY, symbol);
+            shine(board, currentX, currentY, player);
         } else if (move == 'G') {
             int spaces = getSpaces();
-            int[] result = go(board, currentX, currentY, symbol, spaces);
+            int[] result = go(board, currentX, currentY, player, spaces);
             currentX = result[0];
             currentY = result[1];
             done = (result[2] == 1);
@@ -139,32 +140,21 @@ public class treasureHunt {
         return new int[]{currentX, currentY, done ? 1 : 0};
     }
 
-    static char turnLeft(char symbol) {
-        if (symbol == '^') return '<';
-        if (symbol == '<') return 'v';
-        if (symbol == 'v') return '>';
-        return '^';
+    
+
+    static void shine(char[][] board, int x, int y, char player) {
+        if  player == '^') shineUp(board, x, y);
+        else if  player == '<') shineLeft(board, x, y);
+        else if  player == 'v') shineDown(board, x, y);
+        else if  player == '>') shineRight(board, x, y);
+        else System.out.println("Error: Invalid player .");
     }
 
-    static char turnRight(char symbol) {
-        if (symbol == '^') return '>';
-        if (symbol == '>') return 'v';
-        if (symbol == 'v') return '<';
-        return '^';
-    }
-
-    static void shine(char[][] board, int x, int y, char symbol) {
-        if (symbol == '^') shineUp(board, x, y);
-        else if (symbol == '<') shineLeft(board, x, y);
-        else if (symbol == 'v') shineDown(board, x, y);
-        else shineRight(board, x, y);
-    }
-
-    static int[] go(char[][] board, int x, int y, char symbol, int spaces) {
-        if (symbol == '^') return goUp(board, x, y, spaces);
-        if (symbol == '<') return goLeft(board, x, y, spaces);
-        if (symbol == 'v') return goDown(board, x, y, spaces);
-        return goRight(board, x, y, spaces);
+    static int[] go(char[][] board, int x, int y, char player, int spaces) {
+        if  player == '^') return goUp(board, x, y, spaces);
+        if  player == '<') return goLeft(board, x, y, spaces);
+        if  player == 'v') return goDown(board, x, y, spaces);
+        else if  player == '>') return goRight(board, x, y, spaces);     
     }
 
     // -----------------------------
@@ -229,13 +219,13 @@ public class treasureHunt {
         placeRandom(board, randomDirection());
     }
 
-    static void placeRandom(char[][] board, char symbol) {
+    static void placeRandom(char[][] board, char player) {
         Random rand = new Random();
         while (true) {
             int x = rand.nextInt(Max);
             int y = rand.nextInt(Max);
             if (board[x][y] == 'X') {
-                board[x][y] = symbol;
+                board[x][y] = player;
                 return;
             }
         }
