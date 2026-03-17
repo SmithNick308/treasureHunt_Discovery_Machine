@@ -1,1 +1,1 @@
-# maze_solver_Discovery_Machine
+# treasureHunt_Discovery_Machine
