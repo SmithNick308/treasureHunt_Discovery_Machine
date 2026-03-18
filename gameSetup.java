@@ -1,16 +1,30 @@
 import java.util.Scanner;
 
 public class gameSetup {
-    private static final int Max = 10;
+    private static int rowSize = 10;
+    private static int colSize = 10;
     private static Scanner in = new Scanner(System.in);
-
     private char[][] board;
     private int numMoves;
     private Player player;
     private boolean done;
 
+    public int getRowSize() {
+        return rowSize;
+    }
+    public int getColSize() {
+        return colSize;
+    }
+
+    public void setRowSize(int rowSize) {
+        gameSetup.rowSize = rowSize;
+    }
+    public void setColSize(int colSize) {
+        gameSetup.colSize = colSize;
+    }
+    
     public gameSetup() {
-        board = new char[Max][Max];
+        board = new char[rowSize][colSize];
         numMoves = getDifficulty();
         initialize(board);
         int[] pos = findPlayer(board);
@@ -22,7 +36,7 @@ public class gameSetup {
         display(board, numMoves);
 
         while (numMoves > 0 && !done) {
-            int[] result = oneMove(board, player.getX(), player.getY());
+            int[] result = player.oneMove(board);
             player.setX(result[0]);
             player.setY(result[1]);
             done = (result[2] == 1);
@@ -37,51 +51,33 @@ public class gameSetup {
 
     private static int getDifficulty() {
         System.out.print("Degree of difficulty: E)asy M)edium H)ard ");
-        char temp = Character.toUpperCase(in.next().charAt(0));
+        char gameLevel = Character.toUpperCase(in.next().charAt(0));
 
-        while (temp != 'E' && temp != 'M' && temp != 'H') {
+        int easyGame = 56;
+        int mediumGame = 36;
+        int hardGame = 26;
+
+        while (gameLevel != 'E' && gameLevel != 'M' && gameLevel != 'H') {
             System.out.print("Enter first letter: E)asy M)edium H)ard ");
-            temp = Character.toUpperCase(in.next().charAt(0));
+            gameLevel = Character.toUpperCase(in.next().charAt(0));
         }
 
-        if (temp == 'E') 
-            return 56;
-        if (temp == 'M') 
-            return 36;
-        if (temp == 'H')
-            return 26;
+        if (gameLevel == 'E') 
+            return easyGame;
+        if (gameLevel == 'M') 
+            return mediumGame;
+        if (gameLevel == 'H')
+            return hardGame;
         else 
            System.out.println("Error: Invalid difficulty. Defaulting to Easy.");
-           return 56;
-    }
-
-    private static char getMove() {
-        System.out.print("\nEnter your move: R)ight L)eft S)earchlight G)o Q)uit ");
-        char temp = Character.toUpperCase(in.next().charAt(0));
-
-        while ("RLSGQ".indexOf(temp) == -1) {
-            System.out.print("Enter letter: R)ight L)eft S)earchlight G)o Q)uit ");
-            temp = Character.toUpperCase(in.next().charAt(0));
-        }
-        return temp;
-    }
-
-    private static int getSpaces() {
-        System.out.print("Go ahead how many spaces? ");
-        int temp = in.nextInt();
-
-        while (temp <= 0) {
-            System.out.print("Enter a positive integer number of spaces: ");
-            temp = in.nextInt();
-        }
-        return temp;
+           return easyGame;
     }
 
     private static void display(char[][] board, int numMoves){
         System.out.print("\n  ");
         System.out.println("   Number of moves left: " + numMoves);
-        for (int col = 0; col < Max; col++){
-            for (int row = 0; row < Max; row++) {
+        for (int col = 0; col < colSize; col++){
+            for (int row = 0; row < rowSize; row++) {
                     char cell = board[row][col];
                     if (cell == 'o' || cell == 't') System.out.print("X ");
                     else System.out.print(cell + " ");
@@ -92,13 +88,13 @@ public class gameSetup {
 
     private static void reveal(char[][] board) {
         System.out.print("\n  ");
-        for (int col = 0; col < Max; col++) 
+        for (int col = 0; col < colSize; col++) 
             System.out.print(col + " ");
         System.out.println();
 
-        for (int row = 0; row < Max; row++) {
+        for (int row = 0; row < rowSize; row++) {
             System.out.print(row + " ");
-            for (int col = 0; col < Max; col++) {
+            for (int col = 0; col < colSize; col++) {
                 char cell = board[row][col];
                 if (cell == 'o') 
                     System.out.print("o ");
@@ -113,32 +109,10 @@ public class gameSetup {
         }
     }
 
-    private static int[] oneMove(char[][] board, int currentX, int currentY) {
-        char move = getMove();
-        char playerChar = board[currentX][currentY];
-        boolean done = false;
-
-        if (move == 'S') {
-            shine(board, currentX, currentY, playerChar);
-        } 
-        else if (move == 'G') {
-            int spaces = getSpaces();
-            int[] result = go(board, currentX, currentY, playerChar, spaces);
-            currentX = result[0];
-            currentY = result[1];
-            done = (result[2] == 1);
-        } 
-        else if (move == 'Q') {
-            done = true;
-        }
-        return new int[]{currentX, currentY, done ? 1 : 0};
-    }
-
     private static void initialize(char[][] board) {
-        java.util.Random rand = new java.util.Random();
 
-        for (int r = 0; r < Max; r++)
-            for (int c = 0; c < Max; c++)
+        for (int r = 0; r < rowSize; r++)
+            for (int c = 0; c < colSize; c++)
                 board[r][c] = 'X';
 
         int numObstacles = randInt(5, 6);
@@ -149,10 +123,10 @@ public class gameSetup {
             int y = randInt(0, 8);
 
             if (direction == 0) {
-                for (int col = y; col < y + length && col < Max; col++)
+                for (int col = y; col < y + length && col < colSize; col++)
                     board[x][col] = 'o';
             } else {
-                for (int row = x; row < x + length && row < Max; row++)
+                for (int row = x; row < x + length && row < rowSize; row++)
                     board[row][y] = 'o';
             }
         }
@@ -164,8 +138,8 @@ public class gameSetup {
     private static void placeRandom(char[][] board, char player) {
         java.util.Random rand = new java.util.Random();
         while (true) {
-            int x = rand.nextInt(Max);
-            int y = rand.nextInt(Max);
+            int x = rand.nextInt(rowSize);
+            int y = rand.nextInt(colSize);
             if (board[x][y] == 'X') {
                 board[x][y] = player;
                 return;
@@ -179,8 +153,8 @@ public class gameSetup {
     }
 
     private static int[] findPlayer(char[][] board) {
-        for (int r = 0; r < Max; r++)
-            for (int c = 0; c < Max; c++)
+        for (int r = 0; r < rowSize; r++)
+            for (int c = 0; c < colSize; c++)
                 if ("^<v>".indexOf(board[r][c]) != -1)
                     return new int[]{r, c};
         return new int[]{0, 0};
@@ -189,6 +163,5 @@ public class gameSetup {
     private static int randInt(int low, int high) {
         return low + (int)(Math.random() * (high - low + 1));
     }
-
-   
+	
 }
