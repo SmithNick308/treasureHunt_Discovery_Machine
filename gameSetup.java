@@ -44,9 +44,15 @@ public class gameSetup {
             temp = Character.toUpperCase(in.next().charAt(0));
         }
 
-        if (temp == 'E') return 56;
-        if (temp == 'M') return 36;
-        return 26;
+        if (temp == 'E') 
+            return 56;
+        if (temp == 'M') 
+            return 36;
+        if (temp == 'H')
+            return 26;
+        else 
+           System.out.println("Error: Invalid difficulty. Defaulting to Easy.");
+           return 56;
     }
 
     private static char getMove() {
