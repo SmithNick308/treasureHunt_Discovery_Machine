@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "treasureHunt",
+            "request": "launch",
+            "mainClass": "treasureHunt",
+            "projectName": "maze_solver_Discovery_Machine_7469b12a"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

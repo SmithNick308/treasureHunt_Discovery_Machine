@@ -1,88 +1,86 @@
-import java.util.Scanner;
-
 public class player {
   
-    static Scanner in = new Scanner(System.in);
-    int x;
-    int y;
-    char player;
+    private int x;
+    private int y;
+    private char playerDirection;
 
-    player(int x, int y, char player) {
+    public player(int x, int y, char playerDirection) {
         this.x = x;
         this.y = y;
-        this.player = player;
-    } 
+        this.playerDirection = playerDirection;
+    }
 
-    void turnLeft(){
-        switch (player){
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public char getDirection() {
+        return playerDirection;
+    }
+
+    public void setDirection(char playerDirection) {
+        this.playerDirection = playerDirection;
+    }
+
+    public void turnLeft(){
+        switch (playerDirection){
             case '^': 
-                player = '<';
+                playerDirection = '<';
                 break;
             case '<':
-                player = 'v';
+                playerDirection = 'v';
                 break;
             case 'v': 
-                player = '>';
+                playerDirection = '>';
                 break;
             case '>': 
-                player = '^';
+                playerDirection = '^';
                 break;
             default:
-                System.out.println("Error: Invalid player.");
+                System.out.println("Error: Invalid direction.");
         }
     }
 
-    void turnRight(){
-        switch (player){
+    public void turnRight(){
+        switch (playerDirection){
             case '^': 
-                player = '>';
+                playerDirection = '>';
                 break;
             case '>':
-                player = 'v';
+                playerDirection = 'v';
                 break;
             case 'v': 
-                player = '<';
+                playerDirection = '<';
                 break;
             case '<': 
-                player = '^';
+                playerDirection = '^';
                 break;
             default:
-                System.out.println("Error: Invalid player.");
+                System.out.println("Error: Invalid direction.");
         }
     }
-    static int[] oneMove(char[][] board, int currentX, int currentY) {
-        char move = getMove();
-        char player = board[currentX][currentY];
-        boolean done = false;
 
-        if (move == 'S') {
-            shine(board, currentX, currentY, player);
-        } 
-        else if (move == 'G') {
-            int spaces = getSpaces();
-            int[] result = go(board, currentX, currentY, player, spaces);
-            currentX = result[0];
-            currentY = result[1];
-            done = (result[2] == 1);
-        } 
-        else if (move == 'Q') {
-            done = true;
-        }
-        return new int[]{currentX, currentY, done ? 1 : 0};
+     private static void shine(char[][] board, int x, int y, char player) {
+        if  (player == '^') shineUp(board, x, y);
+        else if  (player == '<') shineLeft(board, x, y);
+        else if  (player == 'v') shineDown(board, x, y);
+        else if  (player == '>') shineRight(board, x, y);
+        else System.out.println("Error: Invalid player .");
     }
-    static char getMove() {
-        System.out.print("\nEnter your move: R)ight L)eft S)earchlight G)o Q)uit ");
-        char temp = Character.toUpperCase(in.next().charAt(0));
 
-        while ("RLSGQ".indexOf(temp) == -1) {
-            System.out.print("Enter letter: R)ight L)eft S)earchlight G)o Q)uit ");
-            temp = Character.toUpperCase(in.next().charAt(0));
-        }
-        return temp;
-    }
-    
-   
-    static int[] go(char[][] board, int x, int y, char player, int spaces){
+    private static int[] go(char[][] board, int x, int y, char player, int spaces){
         if ( player == '^') 
             return goUp(board, x, y, spaces);
         if (player == '<') 
@@ -98,20 +96,20 @@ public class player {
     }
 
     private static int[] goLeft(char[][] board, int x, int y, int spaces){
-       if (spaces > x){
+       if (spaces > y){
             System.out.println("Move rejected -- you would be off the edge.");
             return new int[]{x, y, 0};
         }
 
-        for (int col = x - 1; col >= x - spaces; col--){
-            char ch = board[y][col];
+        for (int col = y - 1; col >= y - spaces; col--){
+            char ch = board[x][col];
             if (ch == 'o' || ch == 'O') {
                 System.out.println("You lost. You hit an obstacle.");
-                return new int[]{y, col, 1};
+                return new int[]{x, col, 1};
             }
             if (ch == 't' || ch == 'T') {
                 System.out.println("You won! You reached the treasure!");
-                return new int[]{y, col, 1};
+                return new int[]{x, col, 1};
             }
             board[x][col] = ' ';
         }
@@ -121,20 +119,20 @@ public class player {
         return new int[]{x, y, 0}; }
 
     private static int[] goRight(char[][] board, int x, int y, int spaces) {
-      if (spaces > x) {
+      if (x + spaces >= Max) {
             System.out.println("Move rejected -- you would be off the edge.");
             return new int[]{x, y, 0};
         }
 
-        for (int col = x - 1; col >= x - spaces; col++) {
-            char ch = board[y][col];
+        for (int col = y + 1; col <= y + spaces; col++) {
+            char ch = board[x][col];
             if (ch == 'o' || ch == 'O') {
                 System.out.println("You lost. You hit an obstacle.");
-                return new int[]{y, col, 1};
+                return new int[]{x, col, 1};
             }
             if (ch == 't' || ch == 'T') {
                 System.out.println("You won! You reached the treasure!");
-                return new int[]{y, col, 1};
+                return new int[]{x, col, 1};
             }
             board[x][col] = ' ';
         }
@@ -145,12 +143,12 @@ public class player {
         return new int[]{x, y, 0}; }
 
     private static int[] goDown(char[][] board, int x, int y, int spaces){
-        if (spaces > x) {
+        if (x + spaces >= Max) {
             System.out.println("Move rejected -- you would be off the edge.");
             return new int[]{x, y, 0};
         }
 
-        for (int row = x - 1; row >= x - spaces; row--){
+        for (int row = x + 1; row <= x + spaces; row++){
             char ch = board[row][y];
             if (ch == 'o' || ch == 'O'){
                 System.out.println("You lost. You hit an obstacle.");
@@ -169,7 +167,6 @@ public class player {
         return new int[]{x, y, 0};
     }
 
-   
     private static int[] goUp(char[][] board, int x, int y, int spaces){
         if (spaces > x) {
             System.out.println("Move rejected -- you would be off the edge.");
@@ -194,37 +191,37 @@ public class player {
         board[x][y] = '^';
         return new int[]{x, y, 0};}
 
-     static void shine(char[][] board, int x, int y, char player) {
-        if  (player == '^') 
-            shineUp(board, x, y);
-        else if  (player == '<') 
-            shineLeft(board, x, y);
-        else if  (player == 'v') 
-            shineDown(board, x, y);
-        else if  (player == '>') 
-            shineRight(board, x, y);
-        else 
-            System.out.println("Error: Invalid player .");
+     private static void shineUp(char[][] board, int x, int y, int colSize) {
+        int Col;
+        char Ch;
+
+        for (Col = y + 1; Col <= colSize; Col++){
+            Ch = board[x][Col];
+            if ((Ch == 'O') || (Ch == 'o')){
+            board[x ][Col] = 'O';
+            break;  
+        }
+        else if ((Ch == 'T') || (Ch == 't')){
+            board[x][Col] = 'T';
+            break;   
+        }
+        else
+            board[x][Col] = ' ';
+}
     }
 
-    private static void shineRight(char[][] board, int x2, int y2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'shineRight'");
+    private static void shineDown(char[][] board, int x, int y) {
+        // TODO: Implement shineDown
+        System.out.println("Shine down not implemented yet.");
     }
 
-    private static void shineLeft(char[][] board, int x2, int y2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'shineLeft'");
+    private static void shineLeft(char[][] board, int x, int y) {
+        // TODO: Implement shineLeft
+        System.out.println("Shine left not implemented yet.");
     }
 
-    private static void shineDown(char[][] board, int x2, int y2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'shineDown'");
+    private static void shineRight(char[][] board, int x, int y) {
+        // TODO: Implement shineRight
+        System.out.println("Shine right not implemented yet.");
     }
-
-    private static void shineUp(char[][] board, int x2, int y2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'shineUp'");
-    }
-    
 }
